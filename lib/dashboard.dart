@@ -35,6 +35,7 @@ class DashboardPage extends StatelessWidget {
             children: [
               _buildDashboardCard(
                 title: 'Product List',
+                icon: Icons.list_alt,
                 isFullWidth: true,
                 onTap: () {},
               ),
@@ -44,6 +45,7 @@ class DashboardPage extends StatelessWidget {
                   Expanded(
                     child: _buildDashboardCard(
                       title: 'Add Product',
+                      icon: Icons.note_add,
                       onTap: () {},
                     ),
                   ),
@@ -51,6 +53,7 @@ class DashboardPage extends StatelessWidget {
                   Expanded(
                     child: _buildDashboardCard(
                       title: 'Sale Product',
+                      icon: Icons.remove_shopping_cart,
                       onTap: () {},
                     ),
                   ),
@@ -59,6 +62,7 @@ class DashboardPage extends StatelessWidget {
               const SizedBox(height: 12),
               _buildDashboardCard(
                 title: 'Vendor List',
+                icon: Icons.people_alt,
                 isFullWidth: true,
                 onTap: () {},
               ),
@@ -68,6 +72,7 @@ class DashboardPage extends StatelessWidget {
                   Expanded(
                     child: _buildDashboardCard(
                       title: 'Add Vendor',
+                      icon: Icons.person_add,
                       onTap: () {},
                     ),
                   ),
@@ -75,6 +80,7 @@ class DashboardPage extends StatelessWidget {
                   Expanded(
                     child: _buildDashboardCard(
                       title: 'Transaction history',
+                      icon: Icons.history,
                       onTap: () {},
                     ),
                   ),
@@ -86,6 +92,7 @@ class DashboardPage extends StatelessWidget {
                   Expanded(
                     child: _buildDashboardCard(
                       title: 'Purchase Detail',
+                      icon: Icons.receipt_long,
                       onTap: () {},
                     ),
                   ),
@@ -93,6 +100,7 @@ class DashboardPage extends StatelessWidget {
                   Expanded(
                     child: _buildDashboardCard(
                       title: 'Sales Detail',
+                      icon: Icons.bar_chart,
                       onTap: () {},
                     ),
                   ),
@@ -107,6 +115,7 @@ class DashboardPage extends StatelessWidget {
 
   Widget _buildDashboardCard({
     required String title,
+    required IconData icon,
     required VoidCallback onTap,
     bool isFullWidth = false,
   }) {
@@ -115,7 +124,7 @@ class DashboardPage extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: Container(
         width: isFullWidth ? double.infinity : null,
-        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
         decoration: BoxDecoration(
           color: const Color(0xFF00ACC1),
           borderRadius: BorderRadius.circular(12),
@@ -127,16 +136,21 @@ class DashboardPage extends StatelessWidget {
             ),
           ],
         ),
-        child: Center(
-          child: Text(
-            title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: isFullWidth ? 18 : 16,
-              fontWeight: FontWeight.bold,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: isFullWidth ? 40 : 36, color: Colors.white),
+            const SizedBox(height: 10),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: isFullWidth ? 18 : 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
