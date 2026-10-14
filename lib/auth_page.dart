@@ -12,20 +12,78 @@ class _AuthPageState extends State<AuthPage> {
   bool isLoginMode = true;
   final _formKey = GlobalKey<FormState>();
 
-  String email = '';
-  String password = '';
-  String name = '';
-  String phone = '';
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const DashboardPage()),
-      );
+      if (isLoginMode) {
+        // Login success -> Animate and navigate to Dashboard
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => const DashboardPage(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0.0, 0.08),
+                    end: Offset.zero,
+                  ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOutCubic)),
+                  child: child,
+                ),
+              );
+            },
+            transitionDuration: const Duration(milliseconds: 700),
+          ),
+        );
+      } else {
+        // Sign up success -> Show popup dialog
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              title: const Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.green, size: 28),
+                  SizedBox(width: 10),
+                  Text('Success'),
+                ],
+              ),
+              content: const Text('Account created successfully! Please log in with your credentials.'),
+              actions: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.purple, foregroundColor: Colors.white),
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close dialog
+                    setState(() {
+                      isLoginMode = true; // Switch back to login
+                      _formKey.currentState?.reset();
+                      _passwordController.clear();
+                    });
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
     }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _nameController.dispose();
+    _phoneController.dispose();
+    super.dispose();
   }
 
   @override
@@ -35,6 +93,7 @@ class _AuthPageState extends State<AuthPage> {
         title: Text(isLoginMode ? 'Sign In - M&K IMS' : 'Sign Up - M&K IMS'),
         backgroundColor: Colors.purple,
         centerTitle: true,
+        elevation: 0,
       ),
       body: SafeArea(
         child: Center(
@@ -56,122 +115,123 @@ class _AuthPageState extends State<AuthPage> {
               ),
               child: Form(
                 key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.inventory_2_outlined,
-                      size: 64,
-                      color: Colors.purple,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      isLoginMode ? 'Welcome Back!' : 'Create Account',
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 400),
+                  transitionBuilder: (Widget child, Animation<double> animation) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                  child: Column(
+                    key: ValueKey<bool>(isLoginMode),
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.inventory_2_outlined,
+                        size: 64,
                         color: Colors.purple,
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                    if (!isLoginMode) ...[
-                      TextFormField(
-                        key: const ValueKey('fullName'),
-                        decoration: const InputDecoration(
-                          labelText: 'Full Name',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
-                        onSaved: (v) => name = v!.trim(),
-                      ),
                       const SizedBox(height: 16),
+                      Text(
+                        isLoginMode ? 'Welcome Back!' : 'Create Account',
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.purple,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      if (!isLoginMode) ...[
+                        TextFormField(
+                          key: const ValueKey('fullName'),
+                          controller: _nameController,
+                          decoration: const InputDecoration(
+                            labelText: 'Full Name',
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          key: const ValueKey('phone'),
+                          controller: _phoneController,
+                          decoration: const InputDecoration(
+                            labelText: 'Phone Number',
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.phone,
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) return 'Required';
+                            if (int.tryParse(v.trim()) == null) return 'Numbers only';
+                            if (v.trim().length < 10) return 'Enter a valid phone number';
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                      ],
                       TextFormField(
-                        key: const ValueKey('phone'),
+                        key: const ValueKey('email'),
+                        controller: _emailController,
                         decoration: const InputDecoration(
-                          labelText: 'Phone Number',
+                          labelText: 'Email Address',
                           border: OutlineInputBorder(),
                         ),
-                        keyboardType: TextInputType.phone,
+                        keyboardType: TextInputType.emailAddress,
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) {
-                            return 'Required';
-                          }
-                          if (int.tryParse(v.trim()) == null) {
-                            return 'Numbers only';
-                          }
-                          if (v.trim().length < 10) {
-                            return 'Enter a valid phone number';
-                          }
+                          if (v == null || v.isEmpty) return 'Required';
+                          if (!v.contains('@')) return 'Invalid email';
                           return null;
                         },
-                        onSaved: (v) => phone = v!.trim(),
                       ),
                       const SizedBox(height: 16),
-                    ],
-                    TextFormField(
-                      key: const ValueKey('email'),
-                      decoration: const InputDecoration(
-                        labelText: 'Email Address',
-                        border: OutlineInputBorder(),
+                      TextFormField(
+                        key: const ValueKey('password'),
+                        controller: _passwordController,
+                        decoration: const InputDecoration(
+                          labelText: 'Password',
+                          border: OutlineInputBorder(),
+                        ),
+                        obscureText: true,
+                        validator: (v) {
+                          if (v == null || v.isEmpty) return 'Required';
+                          if (v.length < 6) return 'Minimum 6 characters';
+                          return null;
+                        },
                       ),
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (v) {
-                        if (v == null || v.isEmpty) return 'Required';
-                        if (!v.contains('@')) return 'Invalid email';
-                        return null;
-                      },
-                      onSaved: (v) => email = v!.trim(),
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      key: const ValueKey('password'),
-                      decoration: const InputDecoration(
-                        labelText: 'Password',
-                        border: OutlineInputBorder(),
-                      ),
-                      obscureText: true,
-                      validator: (v) {
-                        if (v == null || v.isEmpty) return 'Required';
-                        if (v.length < 6) return 'Minimum 6 characters';
-                        return null;
-                      },
-                      onSaved: (v) => password = v!,
-                    ),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.purple,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.purple,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          onPressed: _submit,
+                          child: Text(
+                            isLoginMode ? 'Sign In' : 'Sign Up',
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),
-                        onPressed: _submit,
+                      ),
+                      const SizedBox(height: 16),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            isLoginMode = !isLoginMode;
+                            _formKey.currentState?.reset();
+                          });
+                        },
                         child: Text(
-                          isLoginMode ? 'Sign In' : 'Sign Up',
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          isLoginMode
+                              ? "Don't have an account? Sign Up"
+                              : "Already have an account? Sign In",
+                          style: const TextStyle(color: Colors.purple),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          isLoginMode = !isLoginMode;
-                          _formKey.currentState?.reset();
-                        });
-                      },
-                      child: Text(
-                        isLoginMode
-                            ? "Don't have an account? Sign Up"
-                            : "Already have an account? Sign In",
-                        style: const TextStyle(color: Colors.purple),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
