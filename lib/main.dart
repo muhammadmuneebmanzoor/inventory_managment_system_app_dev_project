@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dashboard.dart';
+import 'auth_page.dart';
 
 void main() {
   runApp(const MKInventoryApp());
@@ -15,8 +15,9 @@ class MKInventoryApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.purple,
+        scaffoldBackgroundColor: Colors.grey[100],
       ),
-      home: const DashboardPage(),
+      home: const AuthPage(),
     );
   }
 }
