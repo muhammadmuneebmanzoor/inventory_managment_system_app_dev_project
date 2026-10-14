@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'auth_page.dart';
+import 'welcome_page.dart';
 
 void main() {
   runApp(const MKInventoryApp());
@@ -17,7 +17,7 @@ class MKInventoryApp extends StatelessWidget {
         primarySwatch: Colors.purple,
         scaffoldBackgroundColor: Colors.grey[100],
       ),
-      home: const AuthPage(),
+      home: const WelcomePage(),
     );
   }
 }
