@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'add_product_page.dart';
+import 'add_vendor_page.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -81,7 +82,14 @@ class DashboardPage extends StatelessWidget {
                     child: _buildDashboardCard(
                       title: 'Add Vendor',
                       icon: Icons.person_add,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AddVendorPage(),
+                          ),
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(width: 12),
