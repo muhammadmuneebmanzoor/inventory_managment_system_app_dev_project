@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'add_product_page.dart';
 import 'add_vendor_page.dart';
+import 'product_list_page.dart';
+import 'vendor_list_page.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -39,7 +41,12 @@ class DashboardPage extends StatelessWidget {
                 title: 'Product List',
                 icon: Icons.list_alt,
                 isFullWidth: true,
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ProductListPage()),
+                  );
+                },
               ),
               const SizedBox(height: 12),
               Row(
@@ -51,9 +58,7 @@ class DashboardPage extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => const AddProductPage(),
-                          ),
+                          MaterialPageRoute(builder: (context) => const AddProductPage()),
                         );
                       },
                     ),
@@ -73,7 +78,12 @@ class DashboardPage extends StatelessWidget {
                 title: 'Vendor List',
                 icon: Icons.people_alt,
                 isFullWidth: true,
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const VendorListPage()),
+                  );
+                },
               ),
               const SizedBox(height: 12),
               Row(
@@ -85,9 +95,7 @@ class DashboardPage extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => const AddVendorPage(),
-                          ),
+                          MaterialPageRoute(builder: (context) => const AddVendorPage()),
                         );
                       },
                     ),
