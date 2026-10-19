@@ -118,7 +118,14 @@ class DashboardPage extends StatelessWidget {
                     child: _buildDashboardCard(
                       title: 'Purchase Detail',
                       icon: Icons.receipt_long,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PurchaseDetailPage(),
+                          ),
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(width: 12),
