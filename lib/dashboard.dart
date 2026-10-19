@@ -3,6 +3,7 @@ import 'add_product_page.dart';
 import 'add_vendor_page.dart';
 import 'product_list_page.dart';
 import 'vendor_list_page.dart';
+import 'purchase_detail_page.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
