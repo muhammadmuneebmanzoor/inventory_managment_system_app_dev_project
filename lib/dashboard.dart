@@ -6,6 +6,7 @@ import 'vendor_list_page.dart';
 import 'sale_product_page.dart';
 import 'purchase_detail_page.dart';
 import 'sales_detail_page.dart';
+import 'transaction_history_page.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -139,7 +140,12 @@ class DashboardPage extends StatelessWidget {
                     child: _buildDashboardCard(
                       title: 'Transaction history',
                       icon: Icons.history,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const TransactionHistoryPage()),
+                        );
+                      },
                     ),
                   ),
                 ],
