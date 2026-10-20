@@ -20,11 +20,10 @@ class _AuthPageState extends State<AuthPage> {
   void _submit() {
     if (_formKey.currentState!.validate()) {
       if (isLoginMode) {
-        // Login success -> Animate and navigate to Dashboard
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => const DashboardPage(),
+            pageBuilder: (context, animation, secondaryAnimation) => DashboardPage(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
               return FadeTransition(
                 opacity: animation,
@@ -41,7 +40,6 @@ class _AuthPageState extends State<AuthPage> {
           ),
         );
       } else {
-        // Sign up success -> Show popup dialog
         showDialog(
           context: context,
           barrierDismissible: false,
@@ -60,9 +58,9 @@ class _AuthPageState extends State<AuthPage> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.purple, foregroundColor: Colors.white),
                   onPressed: () {
-                    Navigator.of(context).pop(); // Close dialog
+                    Navigator.of(context).pop();
                     setState(() {
-                      isLoginMode = true; // Switch back to login
+                      isLoginMode = true;
                       _formKey.currentState?.reset();
                       _passwordController.clear();
                     });
