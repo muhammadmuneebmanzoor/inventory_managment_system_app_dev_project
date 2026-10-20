@@ -4,6 +4,7 @@ import 'add_vendor_page.dart';
 import 'product_list_page.dart';
 import 'vendor_list_page.dart';
 import 'purchase_detail_page.dart';
+import 'sales_detail_page.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -19,17 +20,43 @@ class DashboardPage extends StatelessWidget {
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
-          children: const [
-            DrawerHeader(
+          children: [
+            const DrawerHeader(
               decoration: BoxDecoration(color: Colors.purple),
               child: Text(
                 'M&K Menu',
                 style: TextStyle(color: Colors.white, fontSize: 20),
               ),
             ),
-            ListTile(leading: Icon(Icons.home), title: Text('Dashboard')),
-            ListTile(leading: Icon(Icons.inventory), title: Text('Product List')),
-            ListTile(leading: Icon(Icons.people), title: Text('Vendor List')),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Dashboard'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.inventory),
+              title: const Text('Product List'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProductListPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.people),
+              title: const Text('Vendor List'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const VendorListPage()),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -133,7 +160,14 @@ class DashboardPage extends StatelessWidget {
                     child: _buildDashboardCard(
                       title: 'Sales Detail',
                       icon: Icons.bar_chart,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SalesDetailPage(),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
