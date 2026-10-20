@@ -16,7 +16,7 @@ class PurchaseDetailPage extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              // Scrollable table view for horizontal and vertical overflow protection
+
               Expanded(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -48,7 +48,7 @@ class PurchaseDetailPage extends StatelessWidget {
                           label: Text('Description', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                         ),
                       ],
-                      // Empty rows list for prototype setup
+
                       rows: const [],
                     ),
                   ),
@@ -68,7 +68,7 @@ class PurchaseDetailPage extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    // Export action placeholder
+
                   },
                   icon: const Icon(Icons.download),
                   label: const Text('Export', style: TextStyle(fontWeight: FontWeight.bold)),

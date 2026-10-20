@@ -4,6 +4,8 @@ import 'add_vendor_page.dart';
 import 'product_list_page.dart';
 import 'vendor_list_page.dart';
 import 'sale_product_page.dart';
+import 'purchase_detail_page.dart';
+import 'sales_detail_page.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -19,17 +21,43 @@ class DashboardPage extends StatelessWidget {
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
-          children: const [
-            DrawerHeader(
+          children: [
+            const DrawerHeader(
               decoration: BoxDecoration(color: Colors.purple),
               child: Text(
                 'M&K Menu',
                 style: TextStyle(color: Colors.white, fontSize: 20),
               ),
             ),
-            ListTile(leading: Icon(Icons.home), title: Text('Dashboard')),
-            ListTile(leading: Icon(Icons.inventory), title: Text('Product List')),
-            ListTile(leading: Icon(Icons.people), title: Text('Vendor List')),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Dashboard'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.inventory),
+              title: const Text('Product List'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProductListPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.people),
+              title: const Text('Vendor List'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const VendorListPage()),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -123,7 +151,12 @@ class DashboardPage extends StatelessWidget {
                     child: _buildDashboardCard(
                       title: 'Purchase Detail',
                       icon: Icons.receipt_long,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const PurchaseDetailPage()),
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -131,7 +164,12 @@ class DashboardPage extends StatelessWidget {
                     child: _buildDashboardCard(
                       title: 'Sales Detail',
                       icon: Icons.bar_chart,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const SalesDetailPage()),
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -149,38 +187,43 @@ class DashboardPage extends StatelessWidget {
     required VoidCallback onTap,
     bool isFullWidth = false,
   }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        width: isFullWidth ? double.infinity : null,
-        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-        decoration: BoxDecoration(
-          color: const Color(0xFF00ACC1),
+    return Container(
+      width: isFullWidth ? double.infinity : null,
+      decoration: BoxDecoration(
+        color: const Color(0xFF00ACC1),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 6,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 6,
-              offset: Offset(0, 3),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: isFullWidth ? 40 : 36, color: Colors.white),
+                const SizedBox(height: 10),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: isFullWidth ? 18 : 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: isFullWidth ? 40 : 36, color: Colors.white),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: isFullWidth ? 18 : 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
