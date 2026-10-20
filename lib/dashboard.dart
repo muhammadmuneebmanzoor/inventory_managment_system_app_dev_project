@@ -3,7 +3,7 @@ import 'add_product_page.dart';
 import 'add_vendor_page.dart';
 import 'product_list_page.dart';
 import 'vendor_list_page.dart';
-import 'sale_product_page.dart';
+import 'purchase_detail_page.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -69,12 +69,7 @@ class DashboardPage extends StatelessWidget {
                     child: _buildDashboardCard(
                       title: 'Sale Product',
                       icon: Icons.remove_shopping_cart,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const SaleProductPage()),
-                        );
-                      },
+                      onTap: () {},
                     ),
                   ),
                 ],
@@ -123,7 +118,14 @@ class DashboardPage extends StatelessWidget {
                     child: _buildDashboardCard(
                       title: 'Purchase Detail',
                       icon: Icons.receipt_long,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PurchaseDetailPage(),
+                          ),
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(width: 12),
