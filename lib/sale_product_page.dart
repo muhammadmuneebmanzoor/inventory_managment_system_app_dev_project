@@ -112,7 +112,7 @@ class _SaleProductPageState extends State<SaleProductPage> {
                       controller: controller,
                       focusNode: focusNode,
                       decoration: const InputDecoration(
-                        hintText: '',
+                        border: UnderlineInputBorder(),
                       ),
                       validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
                     );
@@ -127,7 +127,7 @@ class _SaleProductPageState extends State<SaleProductPage> {
                   controller: _priceController,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   decoration: const InputDecoration(
-                    hintText: '',
+                    border: UnderlineInputBorder(),
                   ),
                   validator: (v) {
                     if (v == null || v.trim().isEmpty) return 'Required';
@@ -144,7 +144,7 @@ class _SaleProductPageState extends State<SaleProductPage> {
                   controller: _quantityController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                    hintText: '',
+                    border: UnderlineInputBorder(),
                   ),
                   validator: (v) {
                     if (v == null || v.trim().isEmpty) return 'Required';
@@ -162,7 +162,7 @@ class _SaleProductPageState extends State<SaleProductPage> {
                   readOnly: true,
                   onTap: () => _selectDate(context),
                   decoration: const InputDecoration(
-                    hintText: '',
+                    border: UnderlineInputBorder(),
                   ),
                   validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
                 ),
@@ -174,7 +174,7 @@ class _SaleProductPageState extends State<SaleProductPage> {
                 TextFormField(
                   controller: _customerNameController,
                   decoration: const InputDecoration(
-                    hintText: '',
+                    border: UnderlineInputBorder(),
                   ),
                   validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
                 ),
@@ -187,7 +187,7 @@ class _SaleProductPageState extends State<SaleProductPage> {
                   controller: _customerContactController,
                   keyboardType: TextInputType.phone,
                   decoration: const InputDecoration(
-                    hintText: '',
+                    border: UnderlineInputBorder(),
                   ),
                   validator: (v) {
                     if (v == null || v.trim().isEmpty) return 'Required';
