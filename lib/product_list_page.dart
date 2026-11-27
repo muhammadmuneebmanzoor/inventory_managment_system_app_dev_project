@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'app_theme.dart';
+import 'add_product_page.dart';
 
 class ProductListPage extends StatelessWidget {
   const ProductListPage({super.key});
@@ -8,13 +10,22 @@ class ProductListPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Product List'),
-        backgroundColor: Colors.purple,
-        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AddProductPage()),
+              );
+            },
+          ),
+        ],
       ),
       body: const Center(
         child: Text(
           'Product List Page (Coming Soon)',
-          style: TextStyle(fontSize: 18, color: Colors.grey),
+          style: TextStyle(fontSize: 18, color: AppColors.textMuted),
         ),
       ),
     );

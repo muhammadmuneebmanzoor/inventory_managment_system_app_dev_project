@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_theme.dart';
 
 class AddVendorPage extends StatefulWidget {
   const AddVendorPage({super.key});
@@ -17,7 +18,6 @@ class _AddVendorPageState extends State<AddVendorPage> {
 
   void _saveVendor() {
     if (_formKey.currentState!.validate()) {
-     
       Navigator.pop(context);
     }
   }
@@ -36,8 +36,6 @@ class _AddVendorPageState extends State<AddVendorPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Vendor'),
-        backgroundColor: Colors.purple,
-        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.check),
@@ -45,75 +43,70 @@ class _AddVendorPageState extends State<AddVendorPage> {
           ),
         ],
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Supplier Name',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Supplier Name',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 6),
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  hintText: 'Ex: James',
                 ),
-                TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    hintText: 'Ex: James',
-                    hintStyle: TextStyle(color: Colors.grey),
-                  ),
-                  validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Company',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 6),
+              TextFormField(
+                controller: _companyController,
+                decoration: const InputDecoration(
+                  hintText: 'Ex: Piano',
                 ),
-                const SizedBox(height: 20),
-
-                const Text(
-                  'Company',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Address',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 6),
+              TextFormField(
+                controller: _addressController,
+                decoration: const InputDecoration(
+                  hintText: 'Ex: Jordan',
                 ),
-                TextFormField(
-                  controller: _companyController,
-                  decoration: const InputDecoration(
-                    hintText: 'Ex: Piano',
-                    hintStyle: TextStyle(color: Colors.grey),
-                  ),
-                  validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Contact No',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 6),
+              TextFormField(
+                controller: _contactController,
+                keyboardType: TextInputType.phone,
+                decoration: const InputDecoration(
+                  hintText: 'Ex: +9232148...',
                 ),
-                const SizedBox(height: 20),
-
-                const Text(
-                  'Address',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
-                ),
-                TextFormField(
-                  controller: _addressController,
-                  decoration: const InputDecoration(
-                    hintText: 'Ex: Jordan',
-                    hintStyle: TextStyle(color: Colors.grey),
-                  ),
-                  validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
-                ),
-                const SizedBox(height: 20),
-
-                const Text(
-                  'Contact No',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
-                ),
-                TextFormField(
-                  controller: _contactController,
-                  keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    hintText: 'Ex: +9232148...',
-                    hintStyle: TextStyle(color: Colors.grey),
-                  ),
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) return 'Required';
-                    if (v.trim().length < 8) return 'Enter a valid contact number';
-                    return null;
-                  },
-                ),
-              ],
-            ),
+                validator: (v) {
+                  if (v == null || v.trim().isEmpty) return 'Required';
+                  if (v.trim().length < 8) return 'Enter a valid contact number';
+                  return null;
+                },
+              ),
+            ],
           ),
         ),
       ),

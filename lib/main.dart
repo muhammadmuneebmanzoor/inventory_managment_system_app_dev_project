@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_theme.dart';
 import 'welcome_page.dart';
 
 void main() {
@@ -13,10 +14,7 @@ class MKInventoryApp extends StatelessWidget {
     return MaterialApp(
       title: 'M&K Inventory Management System',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.purple,
-        scaffoldBackgroundColor: Colors.grey[100],
-      ),
+      theme: AppTheme.theme,
       home: const WelcomePage(),
     );
   }

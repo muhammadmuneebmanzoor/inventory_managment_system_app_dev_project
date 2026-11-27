@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_theme.dart';
 import 'auth_page.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -66,82 +67,82 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: SlideTransition(
-            position: _slideAnimation,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF00ACC1).withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.inventory_2_rounded,
-                        size: 80,
-                        color: Colors.purple,
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    const Text(
-                      'Welcome to M&K',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.purple,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Inventory Management System',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black54,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Streamline your stock, track sales, and manage vendors seamlessly in one place.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 48),
-                    SizedBox(
-                      width: 300,
-                      height: 54,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.purple,
-                          foregroundColor: Colors.white,
-                          elevation: 3,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/Images/bg.jfif'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: SafeArea(
+          child: FadeTransition(
+            opacity: _fadeAnimation,
+            child: SlideTransition(
+              position: _slideAnimation,
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CircleAvatar(
+                            radius: 36,
+                            backgroundColor: AppColors.terracotta,
+                            child: const Icon(
+                              Icons.storefront,
+                              size: 40,
+                              color: AppColors.onPrimary,
+                            ),
                           ),
-                        ),
-                        onPressed: _getStarted,
-                        child: const Text(
-                          'Get Started',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                          const SizedBox(height: 20),
+                          const Text(
+                            'Welcome to M&K',
+                            style: TextStyle(
+                              fontSize: 26,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
+                            ),
                           ),
-                        ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Inventory Management System',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.terracotta,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          const Text(
+                            'Streamline your stock, track sales, and manage vendors seamlessly in one place.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+                          ElevatedButton(
+                            onPressed: _getStarted,
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('Get Started'),
+                                SizedBox(width: 8),
+                                Icon(Icons.arrow_forward),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),

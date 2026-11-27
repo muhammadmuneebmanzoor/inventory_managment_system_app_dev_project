@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_theme.dart';
 
 class SaleProductPage extends StatefulWidget {
   const SaleProductPage({super.key});
@@ -17,7 +18,7 @@ class _SaleProductPageState extends State<SaleProductPage> {
   final TextEditingController _customerNameController = TextEditingController();
   final TextEditingController _customerContactController = TextEditingController();
 
-  final List<String> _dummyProducts = ['Mouse', 'Keyboard', 'Monitor', 'Laptop', 'Pen'];
+  final List<String> _products = [];
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -41,11 +42,7 @@ class _SaleProductPageState extends State<SaleProductPage> {
           title: const Text('Success'),
           content: const Text('Sale recorded successfully!'),
           actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,
-                foregroundColor: Colors.white,
-              ),
+            TextButton(
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
@@ -74,8 +71,6 @@ class _SaleProductPageState extends State<SaleProductPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sale Product'),
-        backgroundColor: Colors.purple,
-        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.check),
@@ -83,146 +78,136 @@ class _SaleProductPageState extends State<SaleProductPage> {
           ),
         ],
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Product Name',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
-                ),
-                Autocomplete<String>(
-                  optionsBuilder: (TextEditingValue textEditingValue) {
-                    if (textEditingValue.text == '') {
-                      return const Iterable<String>.empty();
-                    }
-                    return _dummyProducts.where((String option) {
-                      return option.toLowerCase().contains(textEditingValue.text.toLowerCase());
-                    });
-                  },
-                  onSelected: (String selection) {
-                    _productNameController.text = selection;
-                  },
-                  fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-                    return TextFormField(
-                      controller: controller,
-                      focusNode: focusNode,
-                      decoration: const InputDecoration(
-                        border: UnderlineInputBorder(),
-                      ),
-                      validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
-                    );
-                  },
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Price',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
-                ),
-                TextFormField(
-                  controller: _priceController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
-                  ),
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) return 'Required';
-                    if (double.tryParse(v.trim()) == null) return 'Enter a valid price';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Quantity',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
-                ),
-                TextFormField(
-                  controller: _quantityController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
-                  ),
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) return 'Required';
-                    if (int.tryParse(v.trim()) == null) return 'Enter a valid number';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Date',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
-                ),
-                TextFormField(
-                  controller: _dateController,
-                  readOnly: true,
-                  onTap: () => _selectDate(context),
-                  decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
-                  ),
-                  validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Customer Name',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
-                ),
-                TextFormField(
-                  controller: _customerNameController,
-                  decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
-                  ),
-                  validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Customer Contact',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
-                ),
-                TextFormField(
-                  controller: _customerContactController,
-                  keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
-                  ),
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) return 'Required';
-                    if (v.trim().length < 8) return 'Enter a valid contact number';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 30),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Product Name',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 6),
+              Autocomplete<String>(
+                optionsBuilder: (TextEditingValue textEditingValue) {
+                  if (textEditingValue.text == '') {
+                    return const Iterable<String>.empty();
+                  }
+                  return _products.where((String option) {
+                    return option.toLowerCase().contains(textEditingValue.text.toLowerCase());
+                  });
+                },
+                onSelected: (String selection) {
+                  _productNameController.text = selection;
+                },
+                fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+                  return TextFormField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    decoration: const InputDecoration(
+                      hintText: 'Search or type product name',
                     ),
-                    onPressed: _completeSale,
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.check),
-                        SizedBox(width: 8),
-                        Text(
-                          'Save Sale',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
+                    validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Price',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 6),
+              TextFormField(
+                controller: _priceController,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(
+                  hintText: 'Ex: 15.00',
                 ),
-              ],
-            ),
+                validator: (v) {
+                  if (v == null || v.trim().isEmpty) return 'Required';
+                  if (double.tryParse(v.trim()) == null) return 'Enter a valid price';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Quantity',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 6),
+              TextFormField(
+                controller: _quantityController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  hintText: 'Ex: 2',
+                ),
+                validator: (v) {
+                  if (v == null || v.trim().isEmpty) return 'Required';
+                  if (int.tryParse(v.trim()) == null) return 'Enter a valid number';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Date',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 6),
+              TextFormField(
+                controller: _dateController,
+                readOnly: true,
+                onTap: () => _selectDate(context),
+                decoration: const InputDecoration(
+                  hintText: 'Tap to select date',
+                ),
+                validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Customer Name',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 6),
+              TextFormField(
+                controller: _customerNameController,
+                decoration: const InputDecoration(
+                  hintText: 'Ex: John Doe',
+                ),
+                validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Customer Contact',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 6),
+              TextFormField(
+                controller: _customerContactController,
+                keyboardType: TextInputType.phone,
+                decoration: const InputDecoration(
+                  hintText: 'Ex: +1234567890',
+                ),
+                validator: (v) {
+                  if (v == null || v.trim().isEmpty) return 'Required';
+                  if (v.trim().length < 8) return 'Enter a valid contact number';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: _completeSale,
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.check),
+                    SizedBox(width: 8),
+                    Text('Save Sale'),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

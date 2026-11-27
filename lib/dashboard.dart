@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_theme.dart';
 import 'add_product_page.dart';
 import 'add_vendor_page.dart';
 import 'product_list_page.dart';
@@ -8,26 +9,46 @@ import 'purchase_detail_page.dart';
 import 'sales_detail_page.dart';
 import 'transaction_history_page.dart';
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
   @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  int _currentIndex = 0;
+
+  void _openPage(Widget page) {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => page));
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      _HomeTab(onOpenPage: _openPage),
+      const ProductListPage(),
+      const SalesDetailPage(),
+      const VendorListPage(),
+    ];
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('M&K Inventory Management System'),
-        backgroundColor: Colors.purple,
-        elevation: 0,
+        title: const Text('M&K Inventory'),
       ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.purple),
+              decoration: BoxDecoration(color: AppColors.terracotta),
               child: Text(
-                'M&K Menu',
-                style: TextStyle(color: Colors.white, fontSize: 20),
+                'M&K Inventory',
+                style: TextStyle(
+                  color: AppColors.onPrimary,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             ListTile(
@@ -35,17 +56,23 @@ class DashboardPage extends StatelessWidget {
               title: const Text('Dashboard'),
               onTap: () {
                 Navigator.pop(context);
+                setState(() => _currentIndex = 0);
               },
             ),
             ListTile(
-              leading: const Icon(Icons.inventory),
-              title: const Text('Product List'),
+              leading: const Icon(Icons.inventory_2),
+              title: const Text('Product Stock'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ProductListPage()),
-                );
+                setState(() => _currentIndex = 1);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.bar_chart),
+              title: const Text('Sales Report'),
+              onTap: () {
+                Navigator.pop(context);
+                setState(() => _currentIndex = 2);
               },
             ),
             ListTile(
@@ -53,182 +80,223 @@ class DashboardPage extends StatelessWidget {
               title: const Text('Vendor List'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const VendorListPage()),
-                );
+                setState(() => _currentIndex = 3);
               },
             ),
           ],
         ),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _buildDashboardCard(
-                title: 'Product List',
-                icon: Icons.list_alt,
-                isFullWidth: true,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const ProductListPage()),
-                  );
-                },
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildDashboardCard(
-                      title: 'Add Product',
-                      icon: Icons.note_add,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const AddProductPage()),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildDashboardCard(
-                      title: 'Sale Product',
-                      icon: Icons.remove_shopping_cart,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const SaleProductPage()),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              _buildDashboardCard(
-                title: 'Vendor List',
-                icon: Icons.people_alt,
-                isFullWidth: true,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const VendorListPage()),
-                  );
-                },
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildDashboardCard(
-                      title: 'Add Vendor',
-                      icon: Icons.person_add,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const AddVendorPage()),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildDashboardCard(
-                      title: 'Transaction history',
-                      icon: Icons.history,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const TransactionHistoryPage()),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildDashboardCard(
-                      title: 'Purchase Detail',
-                      icon: Icons.receipt_long,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const PurchaseDetailPage()),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildDashboardCard(
-                      title: 'Sales Detail',
-                      icon: Icons.bar_chart,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const SalesDetailPage()),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: pages,
       ),
-    );
-  }
-
-  Widget _buildDashboardCard({
-    required String title,
-    required IconData icon,
-    required VoidCallback onTap,
-    bool isFullWidth = false,
-  }) {
-    return Container(
-      width: isFullWidth ? double.infinity : null,
-      decoration: BoxDecoration(
-        color: const Color(0xFF00ACC1),
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 6,
-            offset: Offset(0, 3),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        selectedItemColor: AppColors.terracotta,
+        unselectedItemColor: AppColors.textMuted,
+        backgroundColor: AppColors.surface,
+        type: BottomNavigationBarType.fixed,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.inventory_2),
+            label: 'Stock',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bar_chart),
+            label: 'Sales',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.people),
+            label: 'Vendors',
           ),
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, size: isFullWidth ? 40 : 36, color: Colors.white),
-                const SizedBox(height: 10),
-                Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: isFullWidth ? 18 : 16,
-                    fontWeight: FontWeight.bold,
+    );
+  }
+}
+
+class _HomeTab extends StatelessWidget {
+  const _HomeTab({required this.onOpenPage});
+
+  final void Function(Widget page) onOpenPage;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Card(
+            color: AppColors.surface,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 28,
+                    backgroundColor: AppColors.terracotta,
+                    child: const Icon(Icons.store, color: AppColors.onPrimary, size: 30),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 16),
+                  const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Welcome Back',
+                        style: TextStyle(color: AppColors.textMuted, fontSize: 14),
+                      ),
+                      Text(
+                        'M&K Inventory',
+                        style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'QUICK ACTIONS',
+            style: TextStyle(
+              color: AppColors.textMuted,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: _ActionCard(
+                  title: 'Record Sale',
+                  icon: Icons.point_of_sale,
+                  color: AppColors.terracotta,
+                  onTap: () => onOpenPage(const SaleProductPage()),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _ActionCard(
+                  title: 'Add Product',
+                  icon: Icons.add_box,
+                  color: AppColors.oasis,
+                  onTap: () => onOpenPage(const AddProductPage()),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _ActionCard(
+                  title: 'Add Vendor',
+                  icon: Icons.person_add,
+                  color: AppColors.ochre,
+                  onTap: () => onOpenPage(const AddVendorPage()),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _ActionCard(
+                  title: 'Transactions',
+                  icon: Icons.history,
+                  color: AppColors.dusk,
+                  onTap: () => onOpenPage(const TransactionHistoryPage()),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'REPORTS & DETAILS',
+            style: TextStyle(
+              color: AppColors.textMuted,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: _ActionCard(
+                  title: 'Purchase Detail',
+                  icon: Icons.receipt_long,
+                  color: AppColors.sage,
+                  onTap: () => onOpenPage(const PurchaseDetailPage()),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _ActionCard(
+                  title: 'Sales Report',
+                  icon: Icons.bar_chart,
+                  color: AppColors.rose,
+                  onTap: () => onOpenPage(const SalesDetailPage()),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ActionCard extends StatelessWidget {
+  const _ActionCard({
+    required this.title,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  final String title;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 36, color: color),
+              const SizedBox(height: 10),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
         ),
       ),
