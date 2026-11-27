@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'app_theme.dart';
+import 'sale_product_page.dart';
 
 class AddProductPage extends StatefulWidget {
-  const AddProductPage({super.key});
+  const AddProductPage({super.key, this.availableSuppliers = const []});
+
+  final List<String> availableSuppliers;
 
   @override
   State<AddProductPage> createState() => _AddProductPageState();
@@ -23,7 +25,16 @@ class _AddProductPageState extends State<AddProductPage> {
   final ImagePicker _picker = ImagePicker();
 
   String? _selectedSupplier;
-  final List<String> _suppliers = [];
+  late final List<String> _suppliers;
+
+  @override
+  void initState() {
+    super.initState();
+    _suppliers = List<String>.from(widget.availableSuppliers);
+    if (_suppliers.isEmpty) {
+      _suppliers.add('General Supplier');
+    }
+  }
 
   Future<void> _pickImage() async {
     final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -50,7 +61,17 @@ class _AddProductPageState extends State<AddProductPage> {
 
   void _saveProduct() {
     if (_formKey.currentState!.validate()) {
-      Navigator.pop(context);
+      final Product newProduct = Product(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        name: _nameController.text.trim(),
+        price: double.parse(_priceController.text.trim()),
+        quantity: int.parse(_quantityController.text.trim()),
+        date: _dateController.text.trim(),
+        supplier: _selectedSupplier ?? _suppliers.first,
+        description: _descriptionController.text.trim(),
+        imageFile: _selectedImage,
+      );
+      Navigator.pop(context, newProduct);
     }
   }
 
@@ -69,6 +90,8 @@ class _AddProductPageState extends State<AddProductPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Product'),
+        backgroundColor: Colors.purple,
+        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.check),
@@ -76,153 +99,160 @@ class _AddProductPageState extends State<AddProductPage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              width: double.infinity,
-              color: AppColors.surface,
-              padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: Column(
-                children: [
-                  Container(
-                    width: 120,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: AppColors.bg,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.border),
-                    ),
-                    child: _selectedImage != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.file(_selectedImage!, fit: BoxFit.cover),
-                          )
-                        : const Icon(Icons.inventory_2, size: 40, color: AppColors.terracotta),
-                  ),
-                  const SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: _pickImage,
-                    child: const Text('ADD IMAGE'),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Form(
-                key: _formKey,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                color: const Color(0xFFB2EBF2),
+                padding: const EdgeInsets.symmetric(vertical: 24.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Product Name',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 6),
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: const InputDecoration(
-                        hintText: 'Ex: Pen',
+                    Container(
+                      width: 140,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.grey.shade300),
                       ),
-                      validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                      child: _selectedImage != null
+                          ? ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.file(_selectedImage!, fit: BoxFit.cover),
+                      )
+                          : const Icon(Icons.inventory_2, size: 48, color: Colors.grey),
                     ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Product Price',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 6),
-                    TextFormField(
-                      controller: _priceController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(
-                        hintText: 'Ex: 4.50',
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF64B5F6),
+                        foregroundColor: Colors.black87,
+                        elevation: 1,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
                       ),
-                      validator: (v) {
-                        if (v == null || v.trim().isEmpty) return 'Required';
-                        if (double.tryParse(v.trim()) == null) return 'Enter a valid price';
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Quantity',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 6),
-                    TextFormField(
-                      controller: _quantityController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        hintText: 'Ex: 5',
+                      onPressed: _pickImage,
+                      child: const Text(
+                        'ADD IMAGE',
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      validator: (v) {
-                        if (v == null || v.trim().isEmpty) return 'Required';
-                        if (int.tryParse(v.trim()) == null) return 'Enter a valid number';
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Date',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 6),
-                    TextFormField(
-                      controller: _dateController,
-                      readOnly: true,
-                      onTap: () => _selectDate(context),
-                      decoration: const InputDecoration(
-                        hintText: 'Tap to select date',
-                      ),
-                      validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Supplier',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 6),
-                    DropdownButtonFormField<String>(
-                      dropdownColor: AppColors.surface,
-                      initialValue: _selectedSupplier,
-                      hint: const Text('Select Supplier'),
-                      items: _suppliers.isEmpty
-                          ? null
-                          : _suppliers.map((String supplier) {
-                              return DropdownMenuItem<String>(
-                                value: supplier,
-                                child: Text(supplier),
-                              );
-                            }).toList(),
-                      onChanged: _suppliers.isEmpty
-                          ? null
-                          : (newValue) {
-                              setState(() {
-                                _selectedSupplier = newValue;
-                              });
-                            },
-                      validator: (v) => v == null || v.isEmpty ? 'Required' : null,
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Description',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 6),
-                    TextFormField(
-                      controller: _descriptionController,
-                      decoration: const InputDecoration(
-                        hintText: 'Ex: Blue Pen',
-                      ),
-                      validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
                     ),
                   ],
                 ),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Product Name',
+                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                      ),
+                      TextFormField(
+                        controller: _nameController,
+                        decoration: const InputDecoration(
+                          hintText: 'Ex: Pen',
+                          hintStyle: TextStyle(color: Colors.grey),
+                        ),
+                        validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Product Price',
+                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                      ),
+                      TextFormField(
+                        controller: _priceController,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        decoration: const InputDecoration(
+                          hintText: 'Ex: 4.50',
+                          hintStyle: TextStyle(color: Colors.grey),
+                        ),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) return 'Required';
+                          if (double.tryParse(v.trim()) == null) return 'Enter a valid price';
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Quantity',
+                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                      ),
+                      TextFormField(
+                        controller: _quantityController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          hintText: 'Ex: 5',
+                          hintStyle: TextStyle(color: Colors.grey),
+                        ),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) return 'Required';
+                          if (int.tryParse(v.trim()) == null) return 'Enter a valid number';
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Date',
+                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                      ),
+                      TextFormField(
+                        controller: _dateController,
+                        readOnly: true,
+                        onTap: () => _selectDate(context),
+                        decoration: const InputDecoration(
+                          hintText: 'Tap to select',
+                          hintStyle: TextStyle(color: Colors.grey),
+                        ),
+                        validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Supplier',
+                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                      ),
+                      DropdownButtonFormField<String>(
+                        value: _selectedSupplier,
+                        hint: const Text('Select Supplier', style: TextStyle(color: Colors.grey)),
+                        items: _suppliers.map((String supplier) {
+                          return DropdownMenuItem<String>(
+                            value: supplier,
+                            child: Text(supplier),
+                          );
+                        }).toList(),
+                        onChanged: (newValue) {
+                          setState(() {
+                            _selectedSupplier = newValue;
+                          });
+                        },
+                        validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Description',
+                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                      ),
+                      TextFormField(
+                        controller: _descriptionController,
+                        decoration: const InputDecoration(
+                          hintText: 'Ex: Blue Pen',
+                          hintStyle: TextStyle(color: Colors.grey),
+                        ),
+                        validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

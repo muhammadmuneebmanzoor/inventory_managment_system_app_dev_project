@@ -19,6 +19,52 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   int _currentIndex = 0;
 
+  final List<Product> _products = [];
+  final List<SaleTransaction> _transactions = [];
+  final List<String> _suppliers = [];
+
+  Future<void> _openAddProduct() async {
+    final Product? created = await Navigator.push<Product>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AddProductPage(availableSuppliers: _suppliers),
+      ),
+    );
+    if (created != null) {
+      setState(() {
+        _products.add(created);
+      });
+    }
+  }
+
+  void _recordSale(Product product, SaleTransaction transaction) {
+    setState(() {
+      product.quantity = (product.quantity - transaction.quantity).clamp(0, product.quantity);
+      _transactions.insert(0, transaction);
+    });
+  }
+
+  void _openSaleProduct() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SaleProductPage(
+          products: _products,
+          onSaleCompleted: _recordSale,
+        ),
+      ),
+    );
+  }
+
+  void _openTransactions() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => TransactionHistoryPage(transactions: _transactions),
+      ),
+    );
+  }
+
   void _openPage(Widget page) {
     Navigator.push(context, MaterialPageRoute(builder: (_) => page));
   }
@@ -26,8 +72,16 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
-      _HomeTab(onOpenPage: _openPage),
-      const ProductListPage(),
+      _HomeTab(
+        onOpenPage: _openPage,
+        onAddProduct: _openAddProduct,
+        onRecordSale: _openSaleProduct,
+        onOpenTransactions: _openTransactions,
+      ),
+      ProductListPage(
+        products: _products,
+        onAddProduct: _openAddProduct,
+      ),
       const SalesDetailPage(),
       const VendorListPage(),
     ];
@@ -125,9 +179,17 @@ class _DashboardPageState extends State<DashboardPage> {
 }
 
 class _HomeTab extends StatelessWidget {
-  const _HomeTab({required this.onOpenPage});
+  const _HomeTab({
+    required this.onOpenPage,
+    required this.onAddProduct,
+    required this.onRecordSale,
+    required this.onOpenTransactions,
+  });
 
   final void Function(Widget page) onOpenPage;
+  final VoidCallback onAddProduct;
+  final VoidCallback onRecordSale;
+  final VoidCallback onOpenTransactions;
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +249,7 @@ class _HomeTab extends StatelessWidget {
                   title: 'Record Sale',
                   icon: Icons.point_of_sale,
                   color: AppColors.terracotta,
-                  onTap: () => onOpenPage(const SaleProductPage()),
+                  onTap: onRecordSale,
                 ),
               ),
               const SizedBox(width: 12),
@@ -196,7 +258,7 @@ class _HomeTab extends StatelessWidget {
                   title: 'Add Product',
                   icon: Icons.add_box,
                   color: AppColors.oasis,
-                  onTap: () => onOpenPage(const AddProductPage()),
+                  onTap: onAddProduct,
                 ),
               ),
             ],
@@ -218,7 +280,7 @@ class _HomeTab extends StatelessWidget {
                   title: 'Transactions',
                   icon: Icons.history,
                   color: AppColors.dusk,
-                  onTap: () => onOpenPage(const TransactionHistoryPage()),
+                  onTap: onOpenTransactions,
                 ),
               ),
             ],
