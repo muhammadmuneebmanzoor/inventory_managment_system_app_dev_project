@@ -8,6 +8,7 @@ class SaleTransaction {
   final int quantity;
   final double totalPrice;
   final String date;
+  final String time;
   final String customerName;
   final String customerContact;
 
@@ -18,6 +19,7 @@ class SaleTransaction {
     required this.quantity,
     required this.totalPrice,
     required this.date,
+    required this.time,
     required this.customerName,
     required this.customerContact,
   });
@@ -57,19 +59,19 @@ class TransactionHistoryPage extends StatelessWidget {
                 child: const Icon(Icons.receipt_long, color: AppColors.onPrimary),
               ),
               title: Text(
-                '${tx.productName} (x${tx.quantity})',
+                '\$${tx.totalPrice.toStringAsFixed(2)}  •  ${tx.productName} (x${tx.quantity})',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
                 ),
               ),
               subtitle: Text(
-                'Customer: ${tx.customerName} (${tx.customerContact})\nDate: ${tx.date}',
+                'Date: ${tx.date}  |  Time: ${tx.time}\nCustomer: ${tx.customerName} (${tx.customerContact})',
                 style: const TextStyle(color: AppColors.textMuted),
               ),
               isThreeLine: true,
               trailing: Text(
-                tx.totalPrice.toStringAsFixed(2),
+                '\$${tx.totalPrice.toStringAsFixed(2)}',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,

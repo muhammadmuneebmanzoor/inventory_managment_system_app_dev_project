@@ -21,18 +21,34 @@ class _DashboardPageState extends State<DashboardPage> {
 
   final List<Product> _products = [];
   final List<SaleTransaction> _transactions = [];
-  final List<String> _suppliers = [];
+  final List<Vendor> _vendors = [];
+
+  List<String> get _supplierNames => _vendors.map((v) => v.name).toList();
 
   Future<void> _openAddProduct() async {
     final Product? created = await Navigator.push<Product>(
       context,
       MaterialPageRoute(
-        builder: (_) => AddProductPage(availableSuppliers: _suppliers),
+        builder: (_) => AddProductPage(availableSuppliers: _supplierNames),
       ),
     );
     if (created != null) {
       setState(() {
         _products.add(created);
+      });
+    }
+  }
+
+  Future<void> _openAddVendor() async {
+    final Vendor? created = await Navigator.push<Vendor>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const AddVendorPage(),
+      ),
+    );
+    if (created != null) {
+      setState(() {
+        _vendors.add(created);
       });
     }
   }
@@ -65,25 +81,44 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  void _openPage(Widget page) {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => page));
+  void _openSalesReport() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SalesDetailPage(transactions: _transactions),
+      ),
+    );
+  }
+
+  void _openPurchaseDetail() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PurchaseDetailPage(products: _products),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
       _HomeTab(
-        onOpenPage: _openPage,
         onAddProduct: _openAddProduct,
+        onAddVendor: _openAddVendor,
         onRecordSale: _openSaleProduct,
         onOpenTransactions: _openTransactions,
+        onOpenPurchaseDetail: _openPurchaseDetail,
+        onOpenSalesReport: _openSalesReport,
       ),
       ProductListPage(
         products: _products,
         onAddProduct: _openAddProduct,
       ),
-      const SalesDetailPage(),
-      const VendorListPage(),
+      SalesDetailPage(transactions: _transactions),
+      VendorListPage(
+        vendors: _vendors,
+        onAddVendor: _openAddVendor,
+      ),
     ];
 
     return Scaffold(
@@ -180,16 +215,20 @@ class _DashboardPageState extends State<DashboardPage> {
 
 class _HomeTab extends StatelessWidget {
   const _HomeTab({
-    required this.onOpenPage,
     required this.onAddProduct,
+    required this.onAddVendor,
     required this.onRecordSale,
     required this.onOpenTransactions,
+    required this.onOpenPurchaseDetail,
+    required this.onOpenSalesReport,
   });
 
-  final void Function(Widget page) onOpenPage;
   final VoidCallback onAddProduct;
+  final VoidCallback onAddVendor;
   final VoidCallback onRecordSale;
   final VoidCallback onOpenTransactions;
+  final VoidCallback onOpenPurchaseDetail;
+  final VoidCallback onOpenSalesReport;
 
   @override
   Widget build(BuildContext context) {
@@ -271,7 +310,7 @@ class _HomeTab extends StatelessWidget {
                   title: 'Add Vendor',
                   icon: Icons.person_add,
                   color: AppColors.ochre,
-                  onTap: () => onOpenPage(const AddVendorPage()),
+                  onTap: onAddVendor,
                 ),
               ),
               const SizedBox(width: 12),
@@ -303,7 +342,7 @@ class _HomeTab extends StatelessWidget {
                   title: 'Purchase Detail',
                   icon: Icons.receipt_long,
                   color: AppColors.sage,
-                  onTap: () => onOpenPage(const PurchaseDetailPage()),
+                  onTap: onOpenPurchaseDetail,
                 ),
               ),
               const SizedBox(width: 12),
@@ -312,7 +351,7 @@ class _HomeTab extends StatelessWidget {
                   title: 'Sales Report',
                   icon: Icons.bar_chart,
                   color: AppColors.rose,
-                  onTap: () => onOpenPage(const SalesDetailPage()),
+                  onTap: onOpenSalesReport,
                 ),
               ),
             ],

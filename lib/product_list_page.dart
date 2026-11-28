@@ -17,46 +17,59 @@ class ProductListPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Product List'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: onAddProduct,
-          ),
-        ],
       ),
-      body: products.isEmpty
-          ? const Center(
-        child: Text(
-          'Product List Page (Coming Soon)',
-          style: TextStyle(fontSize: 18, color: AppColors.textMuted),
-        ),
-      )
-          : ListView.builder(
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
-        itemCount: products.length,
-        itemBuilder: (context, index) {
-          final Product item = products[index];
-          return Card(
-            margin: const EdgeInsets.only(bottom: 12.0),
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: AppColors.oasis,
-                child: const Icon(Icons.inventory_2, color: AppColors.onPrimary),
-              ),
-              title: Text(
-                item.name,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+        child: Column(
+          children: [
+            Expanded(
+              child: products.isEmpty
+                  ? const Center(
+                child: Text(
+                  'No products added yet.',
+                  style: TextStyle(fontSize: 18, color: AppColors.textMuted),
                 ),
-              ),
-              subtitle: Text(
-                'Price: ${item.price.toStringAsFixed(2)}  |  Stock: ${item.quantity}',
-                style: const TextStyle(color: AppColors.textMuted),
+              )
+                  : ListView.builder(
+                itemCount: products.length,
+                itemBuilder: (context, index) {
+                  final Product item = products[index];
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 12.0),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: AppColors.oasis,
+                        backgroundImage: item.imageFile != null
+                            ? FileImage(item.imageFile!)
+                            : null,
+                        child: item.imageFile == null
+                            ? const Icon(Icons.inventory_2, color: AppColors.onPrimary)
+                            : null,
+                      ),
+                      title: Text(
+                        item.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      subtitle: Text(
+                        'Price: \$${item.price.toStringAsFixed(2)}  |  Stock: ${item.quantity}',
+                        style: const TextStyle(color: AppColors.textMuted),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
-          );
-        },
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: onAddProduct,
+              icon: const Icon(Icons.add_box),
+              label: const Text('Add Product'),
+            ),
+          ],
+        ),
       ),
     );
   }

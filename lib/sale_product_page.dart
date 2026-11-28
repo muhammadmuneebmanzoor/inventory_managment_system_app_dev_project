@@ -41,6 +41,23 @@ class SaleProductPage extends StatefulWidget {
 
 class _SaleProductPageState extends State<SaleProductPage> {
   Future<void> _openCheckout(Product product) async {
+    if (product.quantity <= 0) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Out of Stock'),
+          content: Text('${product.name} has 0 stock left.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     final SaleTransaction? result = await Navigator.push<SaleTransaction>(
       context,
       MaterialPageRoute(
@@ -73,6 +90,7 @@ class _SaleProductPageState extends State<SaleProductPage> {
         itemCount: widget.products.length,
         itemBuilder: (context, index) {
           final Product item = widget.products[index];
+          final bool isOutOfStock = item.quantity <= 0;
           return Card(
             margin: const EdgeInsets.only(bottom: 12.0),
             child: ListTile(
@@ -91,8 +109,12 @@ class _SaleProductPageState extends State<SaleProductPage> {
                 ),
               ),
               subtitle: Text(
-                'Price: ${item.price.toStringAsFixed(2)}  |  Stock: ${item.quantity}',
-                style: const TextStyle(color: AppColors.textMuted),
+                isOutOfStock
+                    ? 'Price: \$${item.price.toStringAsFixed(2)}  |  Out of Stock (0)'
+                    : 'Price: \$${item.price.toStringAsFixed(2)}  |  Stock: ${item.quantity}',
+                style: TextStyle(
+                  color: isOutOfStock ? AppColors.rose : AppColors.textMuted,
+                ),
               ),
               trailing: const Icon(Icons.chevron_right, color: AppColors.textMuted),
               onTap: () => _openCheckout(item),
@@ -124,11 +146,20 @@ class _SaleCheckoutPageState extends State<_SaleCheckoutPage> {
 
   double get _totalPrice => widget.product.price * _quantity;
 
+  String _formatDate(DateTime dt) {
+    return '${dt.day}/${dt.month}/${dt.year}';
+  }
+
+  String _formatTime(DateTime dt) {
+    final String hour = dt.hour.toString().padLeft(2, '0');
+    final String minute = dt.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
+  }
+
   @override
   void initState() {
     super.initState();
-    final DateTime now = DateTime.now();
-    _dateController.text = "${now.day}/${now.month}/${now.year}";
+    _dateController.text = _formatDate(DateTime.now());
   }
 
   void _incrementQuantity() {
@@ -156,20 +187,39 @@ class _SaleCheckoutPageState extends State<_SaleCheckoutPage> {
     );
     if (picked != null) {
       setState(() {
-        _dateController.text = "${picked.day}/${picked.month}/${picked.year}";
+        _dateController.text = _formatDate(picked);
       });
     }
   }
 
   void _completeSale() {
+    if (widget.product.quantity <= 0 || _quantity > widget.product.quantity) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Insufficient Stock'),
+          content: Text('Only ${widget.product.quantity} available in stock.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     if (_formKey.currentState!.validate()) {
+      final DateTime now = DateTime.now();
       final SaleTransaction transaction = SaleTransaction(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        id: now.millisecondsSinceEpoch.toString(),
         productName: widget.product.name,
         unitPrice: widget.product.price,
         quantity: _quantity,
         totalPrice: _totalPrice,
         date: _dateController.text.trim(),
+        time: _formatTime(now),
         customerName: _customerNameController.text.trim(),
         customerContact: _customerContactController.text.trim(),
       );
@@ -206,12 +256,6 @@ class _SaleCheckoutPageState extends State<_SaleCheckoutPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sale Product'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: _completeSale,
-          ),
-        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -251,7 +295,7 @@ class _SaleCheckoutPageState extends State<_SaleCheckoutPage> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'Unit Price: ${widget.product.price.toStringAsFixed(2)}  |  Stock: ${widget.product.quantity}',
+                                'Unit Price: \$${widget.product.price.toStringAsFixed(2)}  |  Stock: ${widget.product.quantity}',
                                 style: const TextStyle(
                                   fontSize: 13,
                                   color: AppColors.textMuted,
@@ -315,7 +359,7 @@ class _SaleCheckoutPageState extends State<_SaleCheckoutPage> {
                           style: TextStyle(color: AppColors.textMuted),
                         ),
                         Text(
-                          _totalPrice.toStringAsFixed(2),
+                          '\$${_totalPrice.toStringAsFixed(2)}',
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -373,16 +417,10 @@ class _SaleCheckoutPageState extends State<_SaleCheckoutPage> {
                   },
                 ),
                 const SizedBox(height: 24),
-                ElevatedButton(
+                ElevatedButton.icon(
                   onPressed: _completeSale,
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.check),
-                      SizedBox(width: 8),
-                      Text('Save Sale'),
-                    ],
-                  ),
+                  icon: const Icon(Icons.check),
+                  label: const Text('Save Sale'),
                 ),
               ],
             ),
